@@ -1,7 +1,7 @@
 // Define chart dimensions and margins
 const width = 975;
 const height = 610;
-const margin = {top: 10, right: 10, bottom: 10, left: 10};
+const margin = { top: 10, right: 10, bottom: 10, left: 10 };
 
 // Create SVG element
 const svg = d3.select('body').append('svg')
@@ -14,32 +14,22 @@ const svg = d3.select('body').append('svg')
 Promise.all([
     d3.json("../json_data/us.json"), // Ensure this path correctly points to your geographic data
     d3.json("../json_data/bubblemap_data.json") // Ensure this path correctly points to your population data
-]).then(function([us, population]) {
-    console.log("Geographic data loaded:", us);
-    console.log("Population data loaded:", population);
-    // Log county keys from the geographic data for verification
-    us.objects.counties.geometries.forEach(d => {
-        console.log("Geo ID:", d.id); // Log geographic IDs to verify format
-    });
+]).then(async function([us, population]) {
 
-    // Log expected keys from the population data
-    population.forEach(d => {
-        console.log("Population Key:", d.state + d.county); // Check if this construction matches Geo IDs
-    });
-    const countymap = new Map(); // Map to link county FIPS codes to geographic data
-    us.objects.counties.geometries.forEach(d => {
-        countymap.set(d.id, d); // Assuming 'id' is the FIPS code
-    });
-    console.log("CountyMap ", countymap )
+    // Filter out Alaska and Hawaii from the map
+    us.objects.lower48 = {
+        type: "GeometryCollection",
+        geometries: us.objects.states.geometries.filter(d => d.id !== "02" && d.id !== "15")
+    };
+
+    countymap = new Map(topojson.feature(us, us.objects.counties).features.map(d => [d.id, d]))
+    console.log("CountyMap ", countymap);
+
     // Join the geographic shapes and the population data.
     const data = population.map(d => ({
         ...d,
         county: countymap.get(d.state + d.county) // Adjust this if the FIPS code construction is different
     })).filter(d => d.county && d.county.geometry);
-
-    if (data.length === 0) {
-        console.error("No valid county data was matched or found in the provided population data.");
-    }
 
     // Construct the radius scale.
     const radius = d3.scaleSqrt()
