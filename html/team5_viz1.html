@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>Radar Chart</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.js"></script>
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.js"></script>
+    <script type="text/javascript" src="../js/radial-progress-d3.min.js"></script>
+    <link href="../css/radial-duration.css" rel="stylesheet" type="text/css"/>
+
+  </head>
+  <body>
+    <div> 
+      <p class="title"> Radar Chart </p>
+    </div>
+<div class="container" >
+  <div class="progress"></div>
+</div>
+
+<div style="color: black">
+<div class="left-align"> <p class="text"> Rural </p> <div id="rural" ></div></div>
+<div class="right-align"><p class="text"> Urban </p> <div id="urban"></div></div>
+</div>
+
+<script>
+
+function loadJSON (url) {
+                     var xmlhttp=new XMLHttpRequest();
+
+                     try{
+                     xmlhttp.open("GET",url,false); 
+                     xmlhttp.setRequestHeader("Content-type", "application/json");
+                     
+                     xmlhttp.send(); 
+                     }
+                     catch(err){
+                          alert("Entered file does not exist");
+                          return "";
+                     }
+                     if(xmlhttp.status==404){
+                         alert("Entered file does not exist");
+                         return "";
+                     }
+                     jsonDoc=xmlhttp.responseText;
+                     // console.log(jsonDoc);
+                     return jsonDoc;
+ }
+
+ jsonData=JSON.parse(loadJSON(""));
+</script>
+</body>
+</html>
